@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Play</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Click the box when it turns green!</h1>
+    <div id="box" style="width:200px; height:200px; background:red; cursor:pointer;"></div>
+    <p id="status">Click the red box to start</p>
+
+    <form id="resultForm" action="/submit" method="post" style="display:none;">
+        <input type="hidden" name="name" id="name">
+        <input type="hidden" name="reaction_time_ms" id="reaction_time">
+        <button type="submit">Submit Result</button>
+    </form>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name');
+        document.getElementById('name').value = name;
+
+        const box = document.getElementById('box');
+        const status = document.getElementById('status');
+        let startTime, timeout;
+
+        box.onclick = () => {
+            if (box.style.backgroundColor === 'red') {
+                box.style.backgroundColor = 'gray';
+                status.textContent = "Wait for green...";
+                timeout = setTimeout(() => {
+                    box.style.backgroundColor = 'green';
+                    startTime = Date.now();
+                    status.textContent = "Click now!";
+                }, Math.random() * 3000 + 2000);
+            } else if (box.style.backgroundColor === 'green') {
+                const reaction = Date.now() - startTime;
+                document.getElementById('reaction_time').value = reaction;
+                status.textContent = `Your time: ${reaction} ms`;
+                document.getElementById('resultForm').style.display = 'block';
+            } else {
+                clearTimeout(timeout);
+                box.style.backgroundColor = 'red';
+                status.textContent = "Too soon! Click to try again.";
+            }
+        };
+    </script>
+</body>
+</html>

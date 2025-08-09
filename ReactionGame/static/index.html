@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reaction Game</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Reaction Game</h1>
+    <form action="/static/game.html" method="get">
+        <label>Enter your name: <input type="text" name="name" required></label>
+        <button type="submit">Start Game</button>
+    </form>
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard"></ul>
+    <script>
+        fetch('/leaderboard')
+        .then(res => res.json())
+        .then(data => {
+            const lb = document.getElementById("leaderboard");
+            lb.innerHTML = data.map(entry => `<li>${entry.name}: ${entry.reaction_time_ms} ms</li>`).join('');
+        });
+    </script>
+</body>
+</html>
